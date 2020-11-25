@@ -1,6 +1,10 @@
+from os import path
+
 from flask import Flask
 from flask import request
 from markupsafe import escape
+
+from pocket.config import upload_directory
 
 app = Flask(__name__)
 
@@ -20,7 +24,7 @@ def upload():
     if request.method == 'POST':
         if 'the_file' in request.files:
             f = request.files['the_file']
-            f.save('/Users/developer/code/bradj/pocket/uploads/%s' % f.filename)
+            f.save(path.join(upload_directory(), f.filename))
         else:
             return 'No file found'
     
