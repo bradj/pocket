@@ -4,12 +4,19 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-flask = "*"
+mongoengine = "*"
+dnspython = "*"
+python-dotenv = "*"
+fastapi = "*"
+uvicorn = "*"
 
 [dev-packages]
+pylint = "*"
+autopep8 = "*"
 
 [requires]
 python_version = "3.8"
 
 [scripts]
-start = 'flask run'
+start = 'uvicorn pocket:app --reload'
+db = 'python pocket/db.py'
