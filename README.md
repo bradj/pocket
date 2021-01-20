@@ -11,6 +11,22 @@
 1. `pipenv install`
 1. `pipenv run test`
 
+If you're using **VS Code**:
+
+```
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/.DS_Store": true,
+        "**/*.pyc": true,
+        "**/__pycache__": true
+    },
+    "python.pythonPath": "paste the output of 'pipenv --py' here",
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true
+}
+```
+
 ## Routes
 
 ### Unauthenticated
