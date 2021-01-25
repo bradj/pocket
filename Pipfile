@@ -9,6 +9,7 @@ dnspython = "*"
 python-dotenv = "*"
 fastapi = "*"
 uvicorn = "*"
+python-multipart = "*"
 
 [dev-packages]
 pylint = "*"

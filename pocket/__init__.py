@@ -11,14 +11,17 @@ app = FastAPI()
 async def startup():
     await db.connect()
 
-app.include_router(feed.router)
+app.include_router(
+    feed.router,
+    prefix='/feed',
+    tags=['feed'])
 app.include_router(
     users.router,
     prefix='/u',
     tags=['users'])
 app.include_router(
     auth.router,
-    prefix='/auth',
+    prefix='',
     tags=['auth']
 )
 app.include_router(
