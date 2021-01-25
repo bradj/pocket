@@ -1,14 +1,28 @@
-import os
-from os.path import expanduser
+from dotenv import load_dotenv
+load_dotenv()
+
 import pathlib
+from os.path import expanduser
+from pydantic import BaseSettings
 
 
-def upload_directory():
-    directory = os.getenv('POCKET_UPLOAD_DIR')
+class Settings(BaseSettings):
+    pocket_upload_dir: str
+    db_user: str
+    db_host: str
+    db_password: str
+    db_database: str
+    secret_key: str
 
-    if not directory:
-        directory = pathlib.Path().absolute()
-    else:
+class Config(object):
+    def __init__(self) -> None:
+        self.settings = Settings()
+        self.upload_directory = self._upload_directory()
+
+    def _upload_directory(self) -> str:
+        directory = self.settings.pocket_upload_dir or pathlib.Path().absolute()
         directory = expanduser(directory)
 
-    return directory
+        return directory
+
+config = Config()
