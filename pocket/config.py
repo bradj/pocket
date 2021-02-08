@@ -13,6 +13,9 @@ class Settings(BaseSettings):
     db_password: str
     db_database: str
     secret_key: str
+    algorithm: str
+    access_token_expires_minutes: int
+
 
 class Config(object):
     def __init__(self) -> None:

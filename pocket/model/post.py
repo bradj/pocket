@@ -1,5 +1,5 @@
 from mongoengine import StringField, Document, ReferenceField, ListField, EmbeddedDocument, EmbeddedDocumentField, CASCADE
-from pocket.model.user import User
+from pocket.model.user import UserDB
 from datetime import datetime
 
 
@@ -11,7 +11,7 @@ class Comment(EmbeddedDocument):
 class Post(Document):
     image_location = StringField(max_length=256, required=True)
     caption = StringField(max_length=1024)
-    author = ReferenceField(User, reverse_delete_rule=CASCADE, required=True)
+    author = ReferenceField(UserDB, reverse_delete_rule=CASCADE, required=True)
     created = datetime.utcnow()
     tags = ListField(StringField(max_length=30))
     comments = ListField(EmbeddedDocumentField(Comment))

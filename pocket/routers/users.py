@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from pocket.model.user import User
-from pocket.context import oauth2_scheme, get_current_user
+from pocket.dependencies import oauth2_scheme, get_current_user
 
 
 router = APIRouter()
@@ -12,7 +12,7 @@ async def get_user_feed(username: str, token: str = Depends(oauth2_scheme)):
 
 
 @router.get('/')
-async def current_user(current_user: User = Depends(get_current_user)):
+async def current_user(current_user: object = Depends(get_current_user)):
     return current_user
 
 
