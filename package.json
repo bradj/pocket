@@ -1,0 +1,42 @@
+{
+    "name": "pocket",
+    "version": "0.1.0",
+    "description": "Personal photo site for you, your friends, and family",
+    "main": "src/index.js",
+    "type": "commonjs",
+    "scripts": {
+        "start": "node src/index.js",
+        "monitor": "nodemon src/index.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/bradj/pocket.git"
+    },
+    "author": "Brad Janke",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/bradj/pocket/issues"
+    },
+    "homepage": "https://github.com/bradj/pocket#readme",
+    "_moduleAliases": {
+        "@root": "./src",
+        "@models": "./src/models",
+        "@handlers": "./src/handlers"
+    },
+    "dependencies": {
+        "@koa/router": "^10.0.0",
+        "dotenv": "^8.2.0",
+        "koa": "^2.13.1",
+        "koa-bodyparser": "^4.3.0",
+        "koa-json": "^2.0.2",
+        "koa-logger": "^3.2.1",
+        "module-alias": "^2.2.2",
+        "mongodb": "^3.6.4"
+    },
+    "devDependencies": {
+        "eslint": "^7.21.0",
+        "eslint-config-airbnb-base": "^14.2.1",
+        "eslint-plugin-import": "^2.22.1",
+        "nodemon": "^2.0.7"
+    }
+}
