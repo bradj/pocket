@@ -1,33 +1,61 @@
 const { getCollection } = require('@root/db');
 const log = require('@root/log');
 
-// email = StringField(required = True, max_length = 64)
-// username = StringField(required = True, max_length = 30)
-// password = StringField(required = True, max_length = 128)
-// disabled = BooleanField(default=False)
-// pages
+/**
+ * Pocket Account model
+ * @typedef {Object} Account
+ * @property {string} email - Account email
+ * @property {string} username - Account username
+ * @property {string} hash - Account password hash
+ * @property {boolean} disabled - Is this account disabled
+ * @property {string[]} pages - List of owned pages
+ */
 
 let accounts;
 
+/**
+ * Initializes account collection
+ */
 const init = async () => {
   if (!accounts) {
     accounts = await getCollection('accounts');
   }
+
+  return accounts;
 };
 
 /**
  * Retrieves a user account
- * @param {String} id
+ * @param {String} username
+ * @returns {Account}
  */
-const get = async (id) => {
-  init();
+const getByUsername = async (username) => {
+  await init();
 
   try {
-    const account = await accounts.findOne({ _id: id });
-    log.info('Found account', account);
+    return await accounts.findOne({ username });
   } catch (error) {
-    log.error(`Could not retrieve account for ${id}`, error);
+    log.error(`Could not retrieve account for ${username}`, error);
   }
+
+  return null;
+};
+
+/**
+ * Retrieves a user account
+ * @param {String} email
+ * @returns {Account}
+ */
+const getByEmail = async (email) => {
+  await init();
+
+  try {
+    return await accounts.findOne({ email });
+  } catch (error) {
+    log.error(`Could not retrieve account for ${email}`, error);
+  }
+
+  return null;
 };
 
 /**
@@ -50,6 +78,7 @@ const create = async (email, username, hash) => {
 };
 
 module.exports = {
-  get,
+  getByUsername,
+  getByEmail,
   create,
 };

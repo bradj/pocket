@@ -1,3 +1,4 @@
+const jwt = require('koa-jwt');
 const Router = require('@koa/router');
 const authHandler = require('@handlers/auth');
 const userHandler = require('@handlers/user');
@@ -29,8 +30,8 @@ const auth = () => {
     prefix: '/auth',
   });
 
-  router.post('login', authHandler.login);
-  router.post('logout', authHandler.logout);
+  router.post('/login', authHandler.login);
+  router.post('/logout', authHandler.logout);
 
   return router;
 };
@@ -79,6 +80,7 @@ const init = (app) => {
   app.use(authRouter.routes(), authRouter.allowedMethods());
 
   // Add auth middleware
+  app.use(jwt({ secret: process.env.SECRET_KEY }));
 
   // AuthZ routes
   app.use(adminRouter.routes(), adminRouter.allowedMethods());
