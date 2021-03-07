@@ -9,6 +9,10 @@ const bodyParser = require('koa-bodyparser');
 const Koa = require('koa');
 const router = require('@root/router');
 const db = require('@root/db');
+const log = require('@root/log');
+
+log.init();
+log.info('Pocket is starting');
 
 db.init();
 
@@ -21,7 +25,7 @@ app.use(logger());
 app.use(json());
 
 app.on('error', (err, ctx) => {
-  console.log('server error', err, ctx);
+  log.error('server error', err, ctx);
 });
 
 router(app);

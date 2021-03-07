@@ -11,5 +11,16 @@
         "ecmaVersion": 12
     },
     "rules": {
+    },
+    "settings": {
+      "import/resolver": {
+        "alias": {
+          "map": [
+            ["@root", "./src"],
+            ["@models", "./src/models"],
+            ["@handlers", "./src/handlers"]
+          ]
+        }
+      }
     }
 }

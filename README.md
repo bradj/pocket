@@ -28,3 +28,8 @@
 /p/:postid/comments - POST - adds a new comment
 
 /a/*-* - ADMIN
+
+## Get intellisense working in VS Code
+
+* <https://medium.com/@trukrs/type-safe-javascript-with-jsdoc-7a2a63209b76>
+* <https://medium.com/@trukrs/javascript-type-linting-5903e9e3625f>

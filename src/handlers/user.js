@@ -3,7 +3,7 @@
  * @param {import("koa").Context} ctx
  * @param {Function} next
  */
-const feed = async (ctx, next) => {
+const feed = async (ctx) => {
   ctx.body = 'feed';
 };
 
@@ -12,7 +12,7 @@ const feed = async (ctx, next) => {
  * @param {import("koa").Context} ctx
  * @param {Function} next
  */
-const feedById = async (ctx, next) => {
+const feedById = async (ctx) => {
   ctx.body = 'feedById';
 };
 
@@ -21,7 +21,7 @@ const feedById = async (ctx, next) => {
  * @param {import("koa").Context} ctx
  * @param {Function} next
  */
-const addPost = async (ctx, next) => {
+const addPost = async (ctx) => {
   ctx.body = 'addPost';
 };
 

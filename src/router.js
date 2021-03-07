@@ -2,6 +2,7 @@ const Router = require('@koa/router');
 const authHandler = require('@handlers/auth');
 const userHandler = require('@handlers/user');
 const postHandler = require('@handlers/post');
+const adminHandler = require('@handlers/admin');
 
 /**
  * Generates User routes
@@ -35,6 +36,21 @@ const auth = () => {
 };
 
 /**
+ * Generates Admin routes
+ * @returns {Router} Koa router
+ */
+const admin = () => {
+  const router = new Router({
+    prefix: '/a',
+  });
+
+  // create a new account
+  router.post('/accounts', adminHandler.createAccount);
+
+  return router;
+};
+
+/**
  * Generates Post routes
  * @returns {Router} Koa router
  */
@@ -57,6 +73,7 @@ const init = (app) => {
   const authRouter = auth();
   const userRouter = user();
   const postRouter = post();
+  const adminRouter = admin();
 
   // Public routes
   app.use(authRouter.routes(), authRouter.allowedMethods());
@@ -64,6 +81,7 @@ const init = (app) => {
   // Add auth middleware
 
   // AuthZ routes
+  app.use(adminRouter.routes(), adminRouter.allowedMethods());
   app.use(postRouter.routes(), postRouter.allowedMethods());
   app.use(userRouter.routes(), userRouter.allowedMethods());
 };

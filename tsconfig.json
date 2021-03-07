@@ -1,0 +1,22 @@
+{
+  "display": "Node 14",
+  "compilerOptions": {
+    "allowJs": true,
+    "noEmit": true,
+    "baseUrl": "./src/",
+    "paths": {
+      "@root/*": ["*"],
+      "@models/*": ["models/*"],
+      "@handlers/*": ["handlers/*"]
+    },
+    "lib": [
+      "es2020"
+    ],
+    "module": "commonjs",
+    "target": "es2020",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  }
+}
