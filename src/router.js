@@ -4,6 +4,7 @@ const authHandler = require('@handlers/auth');
 const userHandler = require('@handlers/user');
 const postHandler = require('@handlers/post');
 const adminHandler = require('@handlers/admin');
+const multer = require('@koa/multer');
 
 /**
  * Generates User routes
@@ -13,10 +14,11 @@ const user = () => {
   const router = new Router({
     prefix: '/u',
   });
+  const upload = multer();
 
   router.get('/', userHandler.feed);
   router.get('/:id', userHandler.feedById);
-  router.post('/:id', userHandler.addPost);
+  router.post('/:id', upload.single('image'), userHandler.addPost);
 
   return router;
 };

@@ -16,18 +16,19 @@
 
 /auth/login - POST - authenticates users
 /auth/logout - POST - authenticates users
-/*-* - login
 
 ### Authenticated
 
 / - GET - feed for authenticated user
-/:id - GET - individual user feed
+/:id - GET - feed that's filtered down to just a specific user
 /:id/posts - POST - adds a new post to the specified user feed
 
 /p/:postid - GET - gets specific post
 /p/:postid/comments - POST - adds a new comment
 
-/a/*-* - ADMIN
+### Admin
+
+/a/accounts - POST - Add a new account
 
 ## Get intellisense working in VS Code
 

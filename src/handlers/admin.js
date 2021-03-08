@@ -1,11 +1,12 @@
 const bcrypt = require('bcrypt');
 const account = require('@models/account');
+const page = require('@models/page');
 const log = require('@root/log');
 
 const saltRounds = 12;
 
 /**
- * Create Account
+ * Creates Account and Page documents. Sets Page owner to newly created Account.
  * @param {import("koa").Context} ctx
  */
 const createAccount = async (ctx) => {
@@ -23,11 +24,19 @@ const createAccount = async (ctx) => {
 
   try {
     await account.create(email, username, hash);
-    ctx.body = { success: true };
   } catch (error) {
-    log.error('Could not create account', error);
-    ctx.throw(500, 'Could not create account');
+    log.error('Could not create account', { username, error });
+    ctx.throw(500, 'Creation failure. Please try again.');
   }
+
+  try {
+    await page.create(username);
+  } catch (error) {
+    log.error('Could not create page', { username, error });
+    ctx.throw(500, 'Creation failure. Please try again.');
+  }
+
+  ctx.body = { success: true };
 };
 
 module.exports = {

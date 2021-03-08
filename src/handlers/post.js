@@ -1,10 +1,13 @@
+const log = require('@root/log');
+
 /**
  * Gets post by id
  * @param {import("koa").Context} ctx
  * @param {Function} next
  */
 const getById = async (ctx) => {
-  ctx.body = 'getById';
+  log.info('GetById', { user: ctx.state.user });
+  ctx.body = 'getById ';
 };
 
 /**

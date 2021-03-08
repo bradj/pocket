@@ -8,7 +8,6 @@ const log = require('@root/log');
  * @property {string} username - Account username
  * @property {string} hash - Account password hash
  * @property {boolean} disabled - Is this account disabled
- * @property {string[]} pages - List of owned pages
  */
 
 let accounts;
@@ -67,7 +66,9 @@ const getByEmail = async (email) => {
 const create = async (email, username, hash) => {
   await init();
 
-  const doc = { email, username, hash };
+  const doc = {
+    email, username, hash, disabled: false,
+  };
 
   try {
     const result = await accounts.insertOne(doc);
