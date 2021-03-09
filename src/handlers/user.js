@@ -4,14 +4,26 @@ const log = require('@root/log');
 const path = require('path');
 const { writeFile } = require('fs').promises;
 
+/**
+ * Performs feed
+ * @param {import("koa").Context} ctx
+ * @param {Function} next
+ */
+const feed = async (ctx) => {
+  const { username } = ctx.state.user.data;
+
+  ctx.body = await page.getByUsername(username);
+};
+
+/**
  * Performs feedById
  * @param {import("koa").Context} ctx
  * @param {Function} next
  */
-const feedByUsername = async (ctx) => {
-  const { username } = ctx.params;
+const feedById = async (ctx) => {
+  const { id } = ctx.params;
 
-  ctx.body = await posts.getByUsername(username);
+  ctx.body = await page.getByUsername(id);
 };
 
 /**
