@@ -67,7 +67,13 @@ const create = async (email, username, hash) => {
   await init();
 
   const doc = {
-    email, username, hash, disabled: false,
+    email,
+    username,
+    hash,
+    disabled: false,
+    $currentDate: {
+      created: true,
+    },
   };
 
   try {

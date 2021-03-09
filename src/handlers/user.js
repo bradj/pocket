@@ -1,3 +1,4 @@
+const page = require('@models/page');
 const log = require('@root/log');
 const path = require('path');
 const { writeFile } = require('fs').promises;
@@ -52,6 +53,13 @@ const addPost = async (ctx) => {
   } catch (error) {
     log.error('Could not upload file', { username, location, size: file.size });
     ctx.throw(500, 'Unfortunately, we were unable to save your file. Please try again.');
+  }
+
+  try {
+    await page.addPost(username, location);
+  } catch (error) {
+    log.error('Could not create post', { username, location, error });
+    ctx.throw(500, 'Unfortunately, we were unable to create your post. Please try again.');
   }
 
   ctx.body = { success: true };
