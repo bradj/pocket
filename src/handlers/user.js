@@ -9,7 +9,9 @@ const { writeFile } = require('fs').promises;
  * @param {Function} next
  */
 const feed = async (ctx) => {
-  ctx.body = { success: true };
+  const { username } = ctx.state.user.data;
+
+  ctx.body = await page.getByUsername(username);
 };
 
 /**
@@ -18,7 +20,9 @@ const feed = async (ctx) => {
  * @param {Function} next
  */
 const feedById = async (ctx) => {
-  ctx.body = { success: true };
+  const { id } = ctx.params;
+
+  ctx.body = await page.getByUsername(id);
 };
 
 /**
