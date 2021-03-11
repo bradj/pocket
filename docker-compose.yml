@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+  postgres:
+    image: "postgres:13.2-alpine"
+    environment: 
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_USER: pocketadmin
+      POSTGRES_DB: pocket
+    ports: 
+      - 5432:5432
+  pgadmin:
+    image: "dpage/pgadmin4:5.0"
+    environment:
+      PGADMIN_DEFAULT_PASSWORD: mysecretpassword
+      PGADMIN_DEFAULT_EMAIL: brad@brad.com
+    ports: 
+      - 80:80

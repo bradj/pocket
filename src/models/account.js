@@ -1,4 +1,4 @@
-const { getCollection } = require('@root/db');
+const { query } = require('@root/db');
 const log = require('@root/log');
 
 /**
@@ -10,31 +10,16 @@ const log = require('@root/log');
  * @property {boolean} disabled - Is this account disabled
  */
 
-let accounts;
-
-/**
- * Initializes account collection
- */
-const init = async () => {
-  if (!accounts) {
-    accounts = await getCollection('accounts');
-  }
-
-  return accounts;
-};
-
 /**
  * Retrieves a user account
  * @param {String} username
  * @returns {Account}
  */
 const getByUsername = async (username) => {
-  await init();
-
   try {
-    return await accounts.findOne({ username });
+    return query(`select id, username, email from accounts where username = '${username}' and is_disabled = false`);
   } catch (error) {
-    log.error(`Could not retrieve account for ${username}`, error);
+    log.error(`Could not retrieve account for ${username}`, { error });
   }
 
   return null;
@@ -46,41 +31,45 @@ const getByUsername = async (username) => {
  * @returns {Account}
  */
 const getByEmail = async (email) => {
-  await init();
-
   try {
-    return await accounts.findOne({ email });
+    return query(`select id, username, email from accounts where email = '${email}' and is_disabled = false`);
   } catch (error) {
-    log.error(`Could not retrieve account for ${email}`, error);
+    log.error(`Could not retrieve account for ${email}`, { error });
   }
 
   return null;
 };
 
 /**
- * Creates a user account
+ * Creates an account and page
  * @param {string} email
  * @param {string} username
  * @param {string} password hash
  */
-const create = async (email, username, hash) => {
-  await init();
-
-  const doc = {
-    email,
-    username,
-    hash,
-    disabled: false,
-    $currentDate: {
-      created: true,
-    },
-  };
+const create = async (email, username, hash, salt) => {
+  let accountId;
 
   try {
-    const result = await accounts.insertOne(doc);
-    log.info(`${result.insertedCount} documents were inserted with the _id: ${result.insertedId}`);
+    const text = 'INSERT INTO accounts(username, email, hash, salt) VALUES($1, $2, $3, $4);';
+    const values = [username, email, hash, salt];
+    const rows = await query(text, values);
+    accountId = rows[0].id;
+
+    log.info(`Created account for ${username} at id ${accountId}`);
   } catch (error) {
-    log.error(`Could not create account for ${email}`, error);
+    log.error(`Could not create account for ${email} / ${username}`, { error });
+    throw error;
+  }
+
+  try {
+    const text = 'INSERT INTO pages(account_id, name) VALUES($1, $2);';
+    const values = [accountId, username];
+    const rows = await query(text, values);
+
+    log.info(`Created page for ${username} at id ${rows[0].id}`);
+  } catch (error) {
+    log.error(`Could not create page for ${username}`, { error });
+    throw error;
   }
 };
 

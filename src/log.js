@@ -4,7 +4,6 @@
  */
 
 const winston = require('winston');
-const { Console } = require('winston/lib/winston/transports');
 
 let logger;
 
