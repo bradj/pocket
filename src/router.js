@@ -17,8 +17,8 @@ const user = () => {
   const upload = multer();
 
   router.get('/', userHandler.feed);
-  router.get('/:id', userHandler.feedById);
-  router.post('/:id', upload.single('image'), userHandler.addPost);
+  router.get('/:username', userHandler.feedById);
+  router.post('/:username', upload.single('image'), userHandler.addPost);
 
   return router;
 };

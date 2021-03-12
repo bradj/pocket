@@ -1,5 +1,6 @@
 const { query } = require('@root/db');
 const log = require('@root/log');
+const assert = require('assert');
 
 /**
  * Pocket Page model
@@ -24,11 +25,39 @@ const log = require('@root/log');
  */
 const getByUsername = async (username) => {
   try {
-    return query(`select p.name, p.id, p.account_id from pages p
-  join accounts acc on p.account_id = acc.id
-  where acc.username = '${username}' and p.is_disabled = false and acc.is_disabled = false;`);
+    const text = `select p.name, p.id, p.account_id from pages p
+      join accounts acc on p.account_id = acc.id
+      where acc.username = $1 and p.is_disabled = false and acc.is_disabled = false;`;
+    const values = [username];
+
+    const res = await query(text, values);
+
+    assert(res.rows.length === 1);
+
+    return res.rows[0];
   } catch (error) {
     log.error(`Could not retrieve account for ${username}`, { error });
+    throw error;
+  }
+};
+
+/**
+ * Retrieves a user account
+ * @param {String} username
+ * @returns {Page}
+ */
+const getByAccountId = async (accountId) => {
+  try {
+    const text = 'select name, id from pages where account_id = $1 and is_disabled = false';
+    const values = [accountId];
+
+    const res = await query(text, values);
+
+    assert(res.rows.length === 1);
+
+    return res.rows[0];
+  } catch (error) {
+    log.error(`Could not retrieve account for ${accountId}`, error);
     throw error;
   }
 };
@@ -53,13 +82,13 @@ const create = async (username, accountId) => {
     values = [accountId, username];
   } else {
     // fetch accountId via username before inserting
-    text = `INSERT INTO pages(account_id, name) VALUES((select id from accounts where username = '${username}'), $1);`;
+    text = "INSERT INTO pages(account_id, name) VALUES((select id from accounts where username = '$1'), $1);";
     values = [username];
   }
 
   try {
-    const rows = await query(text, values);
-    log.info(`Created page for ${username} at id ${rows[0].id}`);
+    await query(text, values);
+    log.info(`Created page for ${username}`);
   } catch (error) {
     log.error(`Could not create page for ${username}`, { error });
     throw error;
@@ -79,8 +108,8 @@ const addPost = async (pageId, location, caption) => {
   const values = [pageId, location, caption];
 
   try {
-    const rows = await query(text, values);
-    log.info(`Created new post for page ${pageId} at id ${rows[0].id}`);
+    await query(text, values);
+    log.info(`Created new post for page ${pageId}`);
   } catch (error) {
     log.error(`Could not create post for ${pageId}`, { error });
     throw error;
@@ -90,5 +119,6 @@ const addPost = async (pageId, location, caption) => {
 module.exports = {
   addPost,
   getByUsername,
+  getByAccountId,
   create,
 };

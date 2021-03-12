@@ -1,4 +1,4 @@
-const page = require('@models/page');
+const pages = require('@models/page');
 const log = require('@root/log');
 const path = require('path');
 const { writeFile } = require('fs').promises;
@@ -11,7 +11,7 @@ const { writeFile } = require('fs').promises;
 const feed = async (ctx) => {
   const { username } = ctx.state.user.data;
 
-  ctx.body = await page.getByUsername(username);
+  ctx.body = await pages.getByUsername(username);
 };
 
 /**
@@ -22,7 +22,7 @@ const feed = async (ctx) => {
 const feedById = async (ctx) => {
   const { id } = ctx.params;
 
-  ctx.body = await page.getByUsername(id);
+  ctx.body = await pages.getByUsername(id);
 };
 
 /**
@@ -31,10 +31,9 @@ const feedById = async (ctx) => {
  * @param {Function} next
  */
 const addPost = async (ctx) => {
-  const { username } = ctx.state.user.data;
-  const { id } = ctx.params;
+  const { username, page } = ctx.state.user.data;
 
-  if (username !== id) {
+  if (username !== ctx.params.username) {
     log.error(`User ${username} attempted to modify resources that aren't theirs`);
     ctx.throw(403);
   }
@@ -55,12 +54,12 @@ const addPost = async (ctx) => {
   try {
     await writeFile(location, file.buffer);
   } catch (error) {
-    log.error('Could not upload file', { username, location, size: file.size });
+    log.error('Could not upload file', username, location, file.size);
     ctx.throw(500, 'Unfortunately, we were unable to save your file. Please try again.');
   }
 
   try {
-    await page.addPost(username, location);
+    await pages.addPost(page.id, username, location);
   } catch (error) {
     log.error('Could not create post', { username, location, error });
     ctx.throw(500, 'Unfortunately, we were unable to create your post. Please try again.');

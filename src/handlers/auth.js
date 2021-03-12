@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const accounts = require('@models/account');
+const pages = require('@models/page');
 const log = require('@root/log');
 
 /**
@@ -9,7 +10,7 @@ const log = require('@root/log');
  */
 const login = async (ctx) => {
   const { username, password } = ctx.request.body;
-  const account = await accounts.getByUsername(username);
+  const account = await accounts.getByUsername(username, true);
 
   if (!account) {
     log.error('Failed login attempt: user not found', { username });
@@ -23,8 +24,10 @@ const login = async (ctx) => {
     ctx.throw(400, 'Either your username does not exist or your password does not match the existing user');
   }
 
+  const page = await pages.getByAccountId(account.id);
+
   const token = jwt.sign(
-    { data: { username: account.username, email: account.email } },
+    { data: { username: account.username, email: account.email, page } },
     process.env.SECRET_KEY,
     { expiresIn: `${process.env.ACCESS_TOKEN_EXPIRES_MINUTES ?? 60}m` },
   );

@@ -18,19 +18,18 @@ const createAccount = async (ctx) => {
     ctx.throw(400, 'Passwords do not match', { email, username });
   }
 
-  log.info('Creating account', { email, username });
-
   const hash = await bcrypt.hash(password, saltRounds);
+  let accountId;
 
   try {
-    await account.create(email, username, hash);
+    accountId = await account.create(email, username, hash);
   } catch (error) {
     log.error('Could not create account', { username, error });
     ctx.throw(500, 'Creation failure. Please try again.');
   }
 
   try {
-    await page.create(username);
+    await page.create(username, accountId);
   } catch (error) {
     log.error('Could not create page', { username, error });
     ctx.throw(500, 'Creation failure. Please try again.');

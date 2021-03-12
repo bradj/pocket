@@ -15,9 +15,13 @@ const log = require('@root/log');
  * @param {String} username
  * @returns {Account}
  */
-const getByUsername = async (username) => {
+const getByUsername = async (username, includeHash) => {
   try {
-    return query(`select id, username, email from accounts where username = '${username}' and is_disabled = false`);
+    const text = `select id, username, email${includeHash === true ? ', hash' : ''} from accounts where username = $1 and is_disabled = false`;
+    const values = [username];
+
+    const res = await query(text, values);
+    return res.rows[0];
   } catch (error) {
     log.error(`Could not retrieve account for ${username}`, { error });
   }
@@ -46,29 +50,22 @@ const getByEmail = async (email) => {
  * @param {string} username
  * @param {string} password hash
  */
-const create = async (email, username, hash, salt) => {
+const create = async (email, username, hash) => {
   let accountId;
 
+  log.info('Creating account', { email, username });
+
   try {
-    const text = 'INSERT INTO accounts(username, email, hash, salt) VALUES($1, $2, $3, $4);';
-    const values = [username, email, hash, salt];
-    const rows = await query(text, values);
-    accountId = rows[0].id;
+    const text = 'INSERT INTO accounts(username, email, hash) VALUES($1, $2, $3) RETURNING *';
+    const values = [username, email, hash];
+    const res = await query(text, values);
+    accountId = res.rows[0].id;
 
     log.info(`Created account for ${username} at id ${accountId}`);
+
+    return accountId;
   } catch (error) {
     log.error(`Could not create account for ${email} / ${username}`, { error });
-    throw error;
-  }
-
-  try {
-    const text = 'INSERT INTO pages(account_id, name) VALUES($1, $2);';
-    const values = [accountId, username];
-    const rows = await query(text, values);
-
-    log.info(`Created page for ${username} at id ${rows[0].id}`);
-  } catch (error) {
-    log.error(`Could not create page for ${username}`, { error });
     throw error;
   }
 };

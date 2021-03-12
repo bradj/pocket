@@ -5,7 +5,6 @@ CREATE TABLE accounts
     username character varying(48) COLLATE pg_catalog."default" NOT NULL UNIQUE,
     email character varying(120) COLLATE pg_catalog."default" NOT NULL UNIQUE,
     hash character varying(1200) COLLATE pg_catalog."default" NOT NULL,
-    salt character varying(1200) COLLATE pg_catalog."default" NOT NULL,
     is_disabled boolean DEFAULT false,
     created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
