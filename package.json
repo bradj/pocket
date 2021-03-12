@@ -6,7 +6,8 @@
     "type": "commonjs",
     "scripts": {
         "start": "node src/index.js",
-        "monitor": "nodemon src/index.js"
+        "monitor": "nodemon src/index.js",
+        "db-create": "node scripts/create_schema.js"
     },
     "repository": {
         "type": "git",
@@ -35,9 +36,8 @@
         "koa-jwt": "^4.0.0",
         "koa-logger": "^3.2.1",
         "module-alias": "^2.2.2",
-        "mongodb": "^3.6.4",
         "multer": "^1.4.2",
-        "winston": "^3.3.3"
+        "pg": "^8.5.1"
     },
     "devDependencies": {
         "eslint": "^7.21.0",

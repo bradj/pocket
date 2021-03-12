@@ -1,5 +1,6 @@
-const { getCollection } = require('@root/db');
+const { query } = require('@root/db');
 const log = require('@root/log');
+const assert = require('assert');
 
 /**
  * Pocket Page model
@@ -17,29 +18,23 @@ const log = require('@root/log');
  * @property {object[]} comments - Collection of post comments
  */
 
-let rootPages;
-
-/**
- * Initializes account collection
- */
-const init = async () => {
-  if (!rootPages) {
-    rootPages = await getCollection('pages');
-  }
-
-  return rootPages;
-};
-
 /**
  * Retrieves a user account
  * @param {String} username
- * @returns {Account}
+ * @returns {Page}
  */
 const getByUsername = async (username) => {
-  const pages = await init();
-
   try {
-    return await pages.findOne({ username });
+    const text = `select p.name, p.id, p.account_id from pages p
+      join accounts acc on p.account_id = acc.id
+      where acc.username = $1 and p.is_disabled = false and acc.is_disabled = false;`;
+    const values = [username];
+
+    const res = await query(text, values);
+
+    assert(res.rows.length === 1);
+
+    return res.rows[0];
   } catch (error) {
     log.error(`Could not retrieve account for ${username}`, { error });
     throw error;
@@ -47,23 +42,55 @@ const getByUsername = async (username) => {
 };
 
 /**
- * Creates a page and associates it with the username
- * @param {string} username
+ * Retrieves a user account
+ * @param {String} username
+ * @returns {Page}
  */
-const create = async (username) => {
-  const pages = await init();
-  const doc = {
-    username,
-    posts: [],
-    $currentDate: {
-      created: true,
-    },
-  };
+const getByAccountId = async (accountId) => {
+  try {
+    const text = 'select name, id from pages where account_id = $1 and is_disabled = false';
+    const values = [accountId];
+
+    const res = await query(text, values);
+
+    assert(res.rows.length === 1);
+
+    return res.rows[0];
+  } catch (error) {
+    log.error(`Could not retrieve account for ${accountId}`, error);
+    throw error;
+  }
+};
+
+/**
+ * Creates a page and associates it with the username. Supplying the accountId
+ * saves a trip to the database
+ * @param {string} username
+ * @param {string?} accountId
+ */
+const create = async (username, accountId) => {
+  let text;
+  let values;
+
+  if (!username) {
+    throw new Error('Username and accountId are null');
+  }
+
+  if (accountId) {
+    // since we have the accountId ... no need to fetch it
+    text = 'INSERT INTO pages(account_id, name) VALUES($1, $2);';
+    values = [accountId, username];
+  } else {
+    // fetch accountId via username before inserting
+    text = "INSERT INTO pages(account_id, name) VALUES((select id from accounts where username = '$1'), $1);";
+    values = [username];
+  }
 
   try {
-    await pages.insertOne(doc);
+    await query(text, values);
+    log.info(`Created page for ${username}`);
   } catch (error) {
-    log.error(`Could not create account for ${username}`, { error });
+    log.error(`Could not create page for ${username}`, { error });
     throw error;
   }
 };
@@ -72,24 +99,26 @@ const create = async (username) => {
  * Adds a post to the username's page
  * @param {string} username
  * @param {string} location
+ * @param {string?} caption
  */
-const addPost = async (username, location) => {
-  const pages = await init();
-  const filter = { username };
-  const updateDoc = {
-    $push: {
-      posts: {
-        location,
-        created: new Date().getTime(),
-      },
-    },
-  };
+const addPost = async (pageId, location, caption) => {
+  const text = `INSERT INTO posts(
+    page_id, location, caption)
+    VALUES ($1, $2, $3);`;
+  const values = [pageId, location, caption];
 
-  await pages.updateOne(filter, updateDoc, { upsert: false });
+  try {
+    await query(text, values);
+    log.info(`Created new post for page ${pageId}`);
+  } catch (error) {
+    log.error(`Could not create post for ${pageId}`, { error });
+    throw error;
+  }
 };
 
 module.exports = {
   addPost,
   getByUsername,
+  getByAccountId,
   create,
 };
