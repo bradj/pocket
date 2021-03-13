@@ -4,7 +4,6 @@ const log = require('@root/log');
 const path = require('path');
 const { writeFile } = require('fs').promises;
 
-/**
  * Performs feedById
  * @param {import("koa").Context} ctx
  * @param {Function} next
