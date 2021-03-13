@@ -1,28 +1,17 @@
+const posts = require('@models/post');
 const pages = require('@models/page');
 const log = require('@root/log');
 const path = require('path');
 const { writeFile } = require('fs').promises;
 
-/**
- * Performs feed
- * @param {import("koa").Context} ctx
- * @param {Function} next
- */
-const feed = async (ctx) => {
-  const { username } = ctx.state.user.data;
-
-  ctx.body = await pages.getByUsername(username);
-};
-
-/**
  * Performs feedById
  * @param {import("koa").Context} ctx
  * @param {Function} next
  */
-const feedById = async (ctx) => {
-  const { id } = ctx.params;
+const feedByUsername = async (ctx) => {
+  const { username } = ctx.params;
 
-  ctx.body = await pages.getByUsername(id);
+  ctx.body = await posts.getByUsername(username);
 };
 
 /**
@@ -69,7 +58,6 @@ const addPost = async (ctx) => {
 };
 
 module.exports = {
-  feed,
-  feedById,
+  feedByUsername,
   addPost,
 };

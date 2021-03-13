@@ -27,7 +27,11 @@ const login = async (ctx) => {
   const page = await pages.getByAccountId(account.id);
 
   const token = jwt.sign(
-    { data: { username: account.username, email: account.email, page } },
+    {
+      data: {
+        id: account.id, username: account.username, email: account.email, page,
+      },
+    },
     process.env.SECRET_KEY,
     { expiresIn: `${process.env.ACCESS_TOKEN_EXPIRES_MINUTES ?? 60}m` },
   );
