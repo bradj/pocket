@@ -81,7 +81,7 @@ const init = (app) => {
   app.use(authRouter.routes(), authRouter.allowedMethods());
 
   // Add auth middleware
-  app.use(jwt({ secret: process.env.SECRET_KEY }));
+  app.use(jwt({ secret: process.env.SECRET_KEY, cookie: 'pocketcookie' }));
 
   // AuthZ routes
   app.use(adminRouter.routes(), adminRouter.allowedMethods());

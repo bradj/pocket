@@ -9,7 +9,9 @@ const log = require('@root/log');
  * @param {import("koa").Context} ctx
  */
 const login = async (ctx) => {
+  log.info('AUTH', ctx.request.body);
   const { username, password } = ctx.request.body;
+  const { type: authType } = ctx.request.query;
   const account = await accounts.getByUsername(username, true);
 
   if (!account) {
@@ -36,14 +38,29 @@ const login = async (ctx) => {
     { expiresIn: `${process.env.ACCESS_TOKEN_EXPIRES_MINUTES ?? 60}m` },
   );
 
-  const expirationTime = 60 * parseInt(process.env.ACCESS_TOKEN_EXPIRES_MINUTES ?? 60, 10);
-
-  ctx.body = {
-    token_type: 'Bearer',
-    expires_in: expirationTime,
-    expires_on: Date.now() + (expirationTime * 1000),
-    access_token: token,
+  const msToExpiration = parseInt(process.env.ACCESS_TOKEN_EXPIRES_MINUTES ?? 60, 10) * 60 * 1000;
+  const user = {
+    username: account.username,
+    email: account.email,
   };
+
+  if (authType === 'token') {
+    ctx.body = {
+      token_type: 'Bearer',
+      access_token: token,
+      user,
+    };
+  } else {
+    const cookieBody = {
+      maxAge: msToExpiration,
+      httpOnly: true,
+      overwrite: true,
+      sameSite: 'Lax',
+    };
+
+    ctx.cookies.set('pocketcookie', token, cookieBody);
+    ctx.body = { user };
+  }
 };
 
 /**
