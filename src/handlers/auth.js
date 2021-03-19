@@ -9,7 +9,7 @@ const log = require('@root/log');
  * @param {import("koa").Context} ctx
  */
 const login = async (ctx) => {
-  log.info('AUTH', ctx.request.body);
+  log.info('Auth Body', ctx.request.body);
   const { username, password } = ctx.request.body;
   const { type: authType } = ctx.request.query;
   const account = await accounts.getByUsername(username, true);
@@ -42,6 +42,7 @@ const login = async (ctx) => {
   const user = {
     username: account.username,
     email: account.email,
+    page,
   };
 
   if (authType === 'token') {
@@ -68,7 +69,8 @@ const login = async (ctx) => {
  * @param {import("koa").Context} ctx
  */
 const logout = async (ctx) => {
-  ctx.body = 'Logout';
+  ctx.cookies.set('pocketcookie', null);
+  ctx.body = 'Logged out';
 };
 
 module.exports = {

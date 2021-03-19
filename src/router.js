@@ -16,6 +16,7 @@ const user = () => {
   });
   const upload = multer();
 
+  router.get('/', (ctx) => { ctx.body = { ...ctx.state.user.data }; });
   router.get('/:username', userHandler.feedByUsername);
   router.post('/:username', upload.single('image'), userHandler.addPost);
 
