@@ -15,3 +15,12 @@ services:
       PGADMIN_DEFAULT_EMAIL: brad@brad.com
     ports: 
       - 80:80
+  nginx:
+    build:
+      context: ./assets
+      dockerfile: nginx.dockerfile
+    depends_on: 
+      - postgres
+      - pgadmin
+    ports:
+      - 8080:8080

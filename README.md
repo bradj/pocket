@@ -2,10 +2,12 @@
 
 ## Requirements
 
-* Node v14.16.0
+* Node v14.*
+* Docker & Docker Compose
 
 ## Getting Started
 
+1. `docker-compose up` - Starts postgres, pgadmin, and nginx
 1. `cp .env.example .env` - Change any of the defaults to suit your environment
 1. `npm install`
 1. `npm run monitor`
