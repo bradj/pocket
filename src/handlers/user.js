@@ -3,7 +3,6 @@ const pages = require('@models/page');
 const log = require('@root/log');
 const util = require('@util');
 const path = require('path');
-const { writeFile } = require('fs').promises;
 
 /**
  * Performs feedByUsername
@@ -46,7 +45,7 @@ const addPost = async (ctx) => {
   });
 
   try {
-    await writeFile(saveLocation, file.buffer);
+    await util.imageResize(file.buffer, saveLocation);
   } catch (error) {
     log.error('Could not upload file', username, saveLocation, file.size);
     ctx.throw(500, 'Unfortunately, we were unable to save your file. Please try again.');
