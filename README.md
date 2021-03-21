@@ -22,10 +22,11 @@
 ### Authenticated
 
 / - GET - feed for authenticated user
-/:id - GET - feed that's filtered down to just a specific user
-/:id/posts - POST - adds a new post to the specified user feed
+/u/:username - GET - feed that's filtered down to just a specific user
+/u/:username/posts - POST - adds a new post to the specified user feed
 
-/p/:postid - GET - gets specific post
+/p - GET - instance wide feed
+/p/:postid - GET - specific post
 /p/:postid/comments - POST - adds a new comment
 
 ### Admin

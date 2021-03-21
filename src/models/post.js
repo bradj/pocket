@@ -41,11 +41,36 @@ const getByUsername = async (username) => {
 
     return res.rows;
   } catch (error) {
-    log.error(`Could not retrieve account for ${username}`, { error });
+    log.error(`Could not retrieve account for ${username}`, error);
+    throw error;
+  }
+};
+
+const getInstanceFeed = async (limit) => {
+  try {
+    log.info('Getting instance feed with limit', limit);
+
+    const text = `SELECT
+  po.id, po.location, po.caption, po.created_at, pa.name
+FROM
+  posts po
+join
+  pages pa on pa.id = po.page_id
+where
+  po.is_disabled = false
+  and pa.is_disabled = false
+order by po.created_at desc ${limit ? `limit ${limit}` : ''};`;
+
+    const res = await query(text);
+
+    return res.rows;
+  } catch (error) {
+    log.error('Could not retrieve instance feed', error);
     throw error;
   }
 };
 
 module.exports = {
   getByUsername,
+  getInstanceFeed,
 };

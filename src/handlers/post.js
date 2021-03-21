@@ -1,3 +1,4 @@
+const posts = require('@models/post');
 const log = require('@root/log');
 
 /**
@@ -19,7 +20,12 @@ const addComment = async (ctx) => {
   ctx.body = 'addComment';
 };
 
+const getPosts = async (ctx) => {
+  ctx.body = await posts.getInstanceFeed();
+};
+
 module.exports = {
   getById,
   addComment,
+  getPosts,
 };

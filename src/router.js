@@ -62,6 +62,7 @@ const post = () => {
     prefix: '/p',
   });
 
+  router.get('/', postHandler.getPosts);
   router.get('/:id', postHandler.getById);
   router.post('/:id/comments', postHandler.addComment);
 
