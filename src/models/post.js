@@ -26,7 +26,7 @@ const getByUsername = async (username) => {
   try {
     log.info('Getting posts by username', username);
     const text = `select
-      po.id, po.page_id, po.location, po.caption, po.created_at from posts po
+      pa.name, po.id, po.page_id, po.location, po.caption, po.created_at from posts po
       join
       pages pa on pa.id = po.page_id
       where
