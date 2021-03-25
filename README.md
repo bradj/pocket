@@ -23,6 +23,7 @@
 
 / - GET - feed for authenticated user
 /u/:username - GET - feed that's filtered down to just a specific user
+/u/:username/profile - PATCH - update the users profile
 /u/:username/posts - POST - adds a new post to the specified user feed
 
 /p - GET - instance wide feed

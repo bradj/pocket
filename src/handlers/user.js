@@ -1,8 +1,11 @@
+const accounts = require('@models/account');
 const posts = require('@models/post');
 const pages = require('@models/page');
 const log = require('@root/log');
 const util = require('@util');
+const { cookieOrToken, createJwt, createAccountResponse } = require('@handlers/util');
 const path = require('path');
+const { update } = require('@models/account');
 
 /**
  * Performs feedByUsername
@@ -23,11 +26,6 @@ const feedByUsername = async (ctx) => {
 const addPost = async (ctx) => {
   const { username, page } = ctx.state.user.data;
   let { caption } = ctx.request.body;
-
-  if (username !== ctx.params.username) {
-    log.error(`User ${username} attempted to modify resources that aren't theirs`);
-    ctx.throw(403);
-  }
 
   if (!ctx.request.file) {
     log.error(`User ${username} attempted an upload without attaching a file`);
@@ -67,7 +65,32 @@ const addPost = async (ctx) => {
   ctx.body = { success: true };
 };
 
+const updateProfile = async (ctx) => {
+  const user = ctx.state.user.data;
+  const { email, tagline, avatar } = ctx.request.body;
+
+  log.info(`Updating account ${user.username}`, email, tagline, avatar, ctx.request.body);
+
+  try {
+    await update(user.username, email, tagline, avatar, false);
+  } catch (error) {
+    ctx.throw(500, 'Unfortunately, we were unable to update your profile. Please try again.');
+  }
+
+  try {
+    const account = await accounts.getByUsername(user.username);
+    const page = await pages.getByAccountId(account.id);
+
+    const token = createJwt(account, page);
+    const returnedAccount = createAccountResponse(account, page);
+    cookieOrToken(ctx, returnedAccount, token);
+  } catch (error) {
+    ctx.throw(500, 'Your profile was updated successfully but you need to logout and login.');
+  }
+};
+
 module.exports = {
   feedByUsername,
   addPost,
+  updateProfile,
 };

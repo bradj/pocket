@@ -4,6 +4,7 @@ const authHandler = require('@handlers/auth');
 const userHandler = require('@handlers/user');
 const postHandler = require('@handlers/post');
 const adminHandler = require('@handlers/admin');
+const utilHandler = require('@handlers/util');
 const multer = require('@koa/multer');
 
 /**
@@ -18,7 +19,8 @@ const user = () => {
 
   router.get('/', (ctx) => { ctx.body = { ...ctx.state.user.data }; });
   router.get('/:username', userHandler.feedByUsername);
-  router.post('/:username', upload.single('image'), userHandler.addPost);
+  router.post('/:username', utilHandler.mustBeSameUser, upload.single('image'), userHandler.addPost);
+  router.put('/:username/profile', utilHandler.mustBeSameUser, userHandler.updateProfile);
 
   return router;
 };

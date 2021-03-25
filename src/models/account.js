@@ -17,28 +17,13 @@ const log = require('@root/log');
  */
 const getByUsername = async (username, includeHash) => {
   try {
-    const text = `select id, username, email${includeHash === true ? ', hash' : ''} from accounts where username = $1 and is_disabled = false`;
+    const text = `select id, avatar, username, created_at, updated_at, email${includeHash === true ? ', hash' : ''} from accounts where username = $1 and is_disabled = false`;
     const values = [username];
 
     const res = await query(text, values);
     return res.rows[0];
   } catch (error) {
     log.error(`Could not retrieve account for ${username}`, { error });
-  }
-
-  return null;
-};
-
-/**
- * Retrieves a user account
- * @param {String} email
- * @returns {Account}
- */
-const getByEmail = async (email) => {
-  try {
-    return query(`select id, username, email from accounts where email = '${email}' and is_disabled = false`);
-  } catch (error) {
-    log.error(`Could not retrieve account for ${email}`, { error });
   }
 
   return null;
@@ -70,8 +55,25 @@ const create = async (email, username, hash) => {
   }
 };
 
+const update = async (username, email, tagline, avatar, disabled) => {
+  try {
+    const text = `update accounts set 
+      email = $2,
+      tagline = $3,
+      avatar = $4,
+      is_disabled = ${disabled === true},
+      updated_at = CURRENT_TIMESTAMP
+      where username = $1;`;
+    const values = [username, email, tagline, avatar];
+    await query(text, values);
+  } catch (error) {
+    log.error(`Could not updated account ${username}`, error);
+    throw error;
+  }
+};
+
 module.exports = {
   getByUsername,
-  getByEmail,
   create,
+  update,
 };

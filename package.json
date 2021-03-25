@@ -6,8 +6,7 @@
     "type": "commonjs",
     "scripts": {
         "start": "node src/index.js",
-        "monitor": "nodemon src/index.js",
-        "db-create": "node scripts/create_schema.js"
+        "dev": "nodemon src/index.js"
     },
     "repository": {
         "type": "git",
