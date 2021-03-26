@@ -15,7 +15,10 @@ const { update } = require('@models/account');
 const feedByUsername = async (ctx) => {
   const { username } = ctx.params;
 
-  ctx.body = await posts.getByUsername(username);
+  const account = await accounts.getByUsername(username);
+  const accountPosts = await posts.getByUsername(username);
+
+  ctx.body = { account, posts: accountPosts };
 };
 
 /**
