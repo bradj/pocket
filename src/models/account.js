@@ -17,7 +17,7 @@ const log = require('@root/log');
  */
 const getByUsername = async (username, includeHash) => {
   try {
-    const text = `select id, avatar, username, created_at, updated_at, email${includeHash === true ? ', hash' : ''} from accounts where username = $1 and is_disabled = false`;
+    const text = `select id, tagline, avatar, username, created_at, updated_at, email${includeHash === true ? ', hash' : ''} from accounts where username = $1 and is_disabled = false`;
     const values = [username];
 
     const res = await query(text, values);
